@@ -7,76 +7,42 @@ const DELIVERY_CHARGE = 30;
 const FREE_DELIVERY_ABOVE = 500;
 const RESTAURANT_UPI_ID = "9239538163@upi";
 
-let stopOrderListener = null;
 let stopMenuListener = null;
 
-const $ = (s) => document.querySelector(s);
+const $ = (selector) => document.querySelector(selector);
 
-const money = (n) =>
-  "₹" + Number(n || 0).toLocaleString("en-IN");
-
-/* --------------------------------------------------
-   FIREBASE CONFIG
-   -------------------------------------------------- */
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBsB4Zwu9w8ySFieI2Atz4pJqMXGMTnKr8",
-  authDomain: "khaki-canteen-and-restaurant.firebaseapp.com",
-  projectId: "khaki-canteen-and-restaurant",
-  storageBucket: "khaki-canteen-and-restaurant.firebasestorage.app",
-  messagingSenderId: "389220263925",
-  appId: "1:389220263925:web:8dc04c1301649aa80fa2bc",
-  measurementId: "G-PPYVHBQ81N"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+function money(value) {
+  return "₹" + Number(value || 0).toLocaleString("en-IN");
 }
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, function (c) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[c];
+  });
+}
+
+/* =========================
+   FIREBASE
+========================= */
+
+firebase.initializeApp(window.KHAKI_FIREBASE_CONFIG);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* --------------------------------------------------
-   BASE PATH
-   Works on GitHub Pages project URL
-   -------------------------------------------------- */
-
-const BASE_PATH = window.location.pathname
-  .substring(0, window.location.pathname.lastIndexOf("/") + 1);
-
-/* --------------------------------------------------
-   IMAGE PATH FIX
-   -------------------------------------------------- */
-
-function imagePath(path) {
-  if (!path) return "";
-
-  if (
-    path.startsWith("http://") ||
-    path.startsWith("https://") ||
-    path.startsWith("data:")
-  ) {
-    return path;
-  }
-
-  path = path.replace(/^\/+/, "");
-
-  if (path.startsWith("assets/")) {
-    return BASE_PATH + path;
-  }
-
-  return BASE_PATH + "assets/" + path;
-}
-
-/* --------------------------------------------------
-   INITIALIZE
-   -------------------------------------------------- */
+/* =========================
+   START APP
+========================= */
 
 async function init() {
   try {
-    const response = await fetch(BASE_PATH + "menu.json", {
-      cache: "no-store"
-    });
+    const response = await fetch("./menu.json");
 
     if (!response.ok) {
       throw new Error("menu.json could not be loaded.");
@@ -99,56 +65,49 @@ async function init() {
       }
 
       /*
-        Firebase menu collection is optional.
-        If it exists, it can override menu availability/prices.
-      */
-
+       * Firebase menu listener is optional.
+       * If Firebase menu collection is not configured,
+       * local menu.json will still work.
+       */
       try {
-        stopMenuListener = db
-          .collection("menu")
-          .onSnapshot(
-            (snapshot) => {
-              const changes = {};
+        stopMenuListener = db.collection("menu").onSnapshot(
+          (snapshot) => {
+            if (snapshot.empty) return;
 
-              snapshot.forEach((doc) => {
-                changes[Number(doc.id)] = doc.data();
-              });
+            const changes = {};
 
-              if (Object.keys(changes).length) {
-                menu = menu.map((item) =>
-                  changes[item.id]
-                    ? { ...item, ...changes[item.id] }
-                    : item
-                );
+            snapshot.forEach((doc) => {
+              changes[Number(doc.id)] = doc.data();
+            });
 
-                renderCats();
-                renderMenu();
-                renderCart();
-              }
-            },
-            (error) => {
-              console.warn("Menu Firestore listener:", error);
-            }
-          );
+            menu = menu.map((item) => {
+              return changes[item.id]
+                ? { ...item, ...changes[item.id] }
+                : item;
+            });
+
+            renderCats();
+            renderMenu();
+            renderCart();
+          },
+          () => {
+            // Ignore Firebase menu listener errors.
+          }
+        );
       } catch (error) {
-        console.warn("Menu listener unavailable:", error);
+        // Local menu.json continues working.
       }
 
       if (u) {
         try {
-          const profile = await db
-            .collection("users")
-            .doc(u.uid)
-            .get();
+          const profile = await db.collection("users").doc(u.uid).get();
 
           u.profile = profile.exists ? profile.data() : {};
         } catch (error) {
           u.profile = {};
-          console.warn("Profile loading error:", error);
         }
       }
     });
-
   } catch (error) {
     console.error(error);
 
@@ -159,71 +118,71 @@ async function init() {
         <div class="empty">
           <b>Menu could not be loaded.</b>
           <br><br>
-          Please make sure <b>menu.json</b> is uploaded
-          in the same folder as index.html.
+          Please make sure <b>menu.json</b> is uploaded correctly.
         </div>
       `;
     }
   }
 }
 
-/* --------------------------------------------------
+/* =========================
    CATEGORIES
-   -------------------------------------------------- */
+========================= */
 
 function renderCats() {
-  const cats = [
+  const categories = [
     "All",
     ...new Set(
       menu
-        .filter((x) => x.available !== false)
-        .map((x) => x.category)
+        .filter((item) => item.available !== false)
+        .map((item) => item.category)
     )
   ];
 
-  $("#categories").innerHTML = cats
+  $("#categories").innerHTML = categories
     .map(
-      (c) => `
+      (category) => `
         <button
-          class="${c === activeCat ? "active" : ""}"
-          data-cat="${escapeHtml(c)}"
-        >
-          ${escapeHtml(c)}
+          class="${category === activeCat ? "active" : ""}"
+          data-cat="${escapeHtml(category)}">
+          ${escapeHtml(category)}
         </button>
       `
     )
     .join("");
 }
 
-/* --------------------------------------------------
+/* =========================
    MENU
-   -------------------------------------------------- */
+========================= */
 
 function renderMenu() {
-  const searchInput = $("#search");
+  const searchBox = $("#search");
 
-  const q = searchInput
-    ? searchInput.value.toLowerCase().trim()
+  const query = searchBox
+    ? searchBox.value.toLowerCase().trim()
     : "";
 
-  const filtered = menu.filter((x) => {
-    const available = x.available !== false;
-    const category =
-      activeCat === "All" || x.category === activeCat;
-    const search =
-      !q || String(x.name).toLowerCase().includes(q);
+  const filtered = menu.filter((item) => {
+    const available = item.available !== false;
 
-    return available && category && search;
+    const categoryMatch =
+      activeCat === "All" || item.category === activeCat;
+
+    const searchMatch =
+      item.name.toLowerCase().includes(query);
+
+    return available && categoryMatch && searchMatch;
   });
 
   const groups = {};
 
-  filtered.forEach((x) => {
-    if (!groups[x.category]) {
-      groups[x.category] = [];
+  filtered.forEach((item) => {
+    if (!groups[item.category]) {
+      groups[item.category] = [];
     }
 
-    groups[x.category].push(x);
+    groups[item.category].push(item);
   });
 
   if (!Object.keys(groups).length) {
@@ -237,40 +196,40 @@ function renderMenu() {
 
   $("#menu").innerHTML = Object.entries(groups)
     .map(
-      ([cat, items]) => `
+      ([category, items]) => `
         <div class="category-card">
+
           <div class="category-title">
-            ${escapeHtml(cat)}
+            ${escapeHtml(category)}
           </div>
 
           <div class="items">
 
             ${items
               .map(
-                (x) => `
+                (item) => `
                   <div class="item">
 
                     <img
-                      src="${escapeAttribute(imagePath(x.image))}"
-                      alt="${escapeHtml(x.name)}"
+                      src="${escapeHtml(item.image)}"
+                      alt="${escapeHtml(item.name)}"
                       loading="lazy"
-                      onerror="this.style.display='none'"
+                      onerror="this.src='assets/food-banner.jpg'"
                     >
 
                     <div>
                       <div class="item-name">
-                        ${escapeHtml(x.name)}
+                        ${escapeHtml(item.name)}
                       </div>
 
                       <div class="price">
-                        ${money(x.price)}
+                        ${money(item.price)}
                       </div>
                     </div>
 
                     <button
                       class="add"
-                      data-add="${x.id}"
-                    >
+                      data-add="${item.id}">
                       🛒 Add to Cart
                     </button>
 
@@ -286,96 +245,97 @@ function renderMenu() {
     .join("");
 }
 
-/* --------------------------------------------------
+/* =========================
    CART CALCULATIONS
-   -------------------------------------------------- */
+========================= */
 
 function cartSubtotal() {
   return Object.entries(cart).reduce(
-    (sum, [id, qty]) => {
+    (sum, [id, quantity]) => {
       const item = menu.find((x) => x.id == id);
 
-      return (
-        sum +
-        (item ? Number(item.price) * Number(qty) : 0)
-      );
+      if (!item) return sum;
+
+      return sum + Number(item.price) * Number(quantity);
     },
     0
   );
 }
 
 function deliveryCharge() {
-  const sub = cartSubtotal();
+  const subtotal = cartSubtotal();
 
-  return sub > 0 && sub < FREE_DELIVERY_ABOVE
-    ? DELIVERY_CHARGE
-    : 0;
+  if (subtotal === 0) return 0;
+
+  return subtotal >= FREE_DELIVERY_ABOVE
+    ? 0
+    : DELIVERY_CHARGE;
 }
 
-/* --------------------------------------------------
-   CART DISPLAY
-   -------------------------------------------------- */
+/* =========================
+   CART
+========================= */
 
 function renderCart() {
   const entries = Object.entries(cart)
-    .map(([id, qty]) => ({
+    .map(([id, quantity]) => ({
       item: menu.find((x) => x.id == id),
-      qty: Number(qty)
+      quantity: Number(quantity)
     }))
-    .filter((x) => x.item);
+    .filter((x) => x.item && x.quantity > 0);
 
-  $("#cartItems").innerHTML = entries.length
-    ? entries
-        .map(({ item, qty }) => {
-          const subtotal = Number(item.price) * qty;
+  if (entries.length) {
+    $("#cartItems").innerHTML = entries
+      .map(
+        ({ item, quantity }) => `
+          <div class="cart-row">
 
-          return `
-            <div class="cart-row">
+            <img
+              src="${escapeHtml(item.image)}"
+              alt="${escapeHtml(item.name)}"
+              onerror="this.src='assets/food-banner.jpg'"
+            >
 
-              <img
-                src="${escapeAttribute(imagePath(item.image))}"
-                alt=""
-                onerror="this.style.display='none'"
-              >
+            <div>
 
-              <div>
+              <div class="item-name">
+                ${escapeHtml(item.name)}
+              </div>
 
-                <div class="item-name">
-                  ${escapeHtml(item.name)}
-                </div>
+              <div class="price">
+                ${money(item.price * quantity)}
+              </div>
 
-                <div class="price">
-                  ${money(subtotal)}
-                </div>
+              <div class="qty">
 
-                <div class="qty">
+                <button data-minus="${item.id}">
+                  −
+                </button>
 
-                  <button data-minus="${item.id}">
-                    −
-                  </button>
+                <span>
+                  ${quantity}
+                </span>
 
-                  <span>${qty}</span>
-
-                  <button data-plus="${item.id}">
-                    +
-                  </button>
-
-                </div>
+                <button data-plus="${item.id}">
+                  +
+                </button>
 
               </div>
 
-              <button
-                class="add"
-                data-remove="${item.id}"
-              >
-                Remove
-              </button>
-
             </div>
-          `;
-        })
-        .join("")
-    : `
+
+            <button
+              class="add"
+              data-remove="${item.id}">
+              Remove
+            </button>
+
+          </div>
+        `
+      )
+      .join("");
+  } else {
+    $("#cartItems").innerHTML = `
       <div class="empty">
         🛒
         <br><br>
@@ -386,16 +346,17 @@ function renderCart() {
         </small>
       </div>
     `;
+  }
 
-  const sub = cartSubtotal();
+  const subtotal = cartSubtotal();
   const delivery = deliveryCharge();
-  const grandTotal = sub + delivery;
+  const grandTotal = subtotal + delivery;
 
-  $("#cartTotal").innerHTML = entries.length
-    ? `
+  if (entries.length) {
+    $("#cartTotal").innerHTML = `
       <div style="display:flex;justify-content:space-between">
         <span>Subtotal</span>
-        <span>${money(sub)}</span>
+        <span>${money(subtotal)}</span>
       </div>
 
       <div style="display:flex;justify-content:space-between">
@@ -410,18 +371,21 @@ function renderCart() {
           display:flex;
           justify-content:space-between;
           margin-top:7px
-        "
-      >
+        ">
         <span>Grand Total</span>
         <span>${money(grandTotal)}</span>
       </strong>
-    `
-    : "₹0";
+    `;
+  } else {
+    $("#cartTotal").textContent = "₹0";
+  }
 
-  $("#cartCount").textContent = entries.reduce(
-    (sum, x) => sum + x.qty,
+  const count = entries.reduce(
+    (total, item) => total + item.quantity,
     0
   );
+
+  $("#cartCount").textContent = count;
 
   localStorage.setItem(
     "kc_cart",
@@ -429,44 +393,65 @@ function renderCart() {
   );
 }
 
-/* --------------------------------------------------
-   CLICK EVENTS
-   -------------------------------------------------- */
+/* =========================
+   BUTTON EVENTS
+========================= */
 
-document.addEventListener("click", async (e) => {
-  const target = e.target;
+document.addEventListener("click", async (event) => {
+  const target = event.target;
 
-  const id =
-    target.dataset.add ||
-    target.dataset.plus ||
-    target.dataset.minus ||
-    target.dataset.remove;
+  const addId = target.dataset.add;
+  const plusId = target.dataset.plus;
+  const minusId = target.dataset.minus;
+  const removeId = target.dataset.remove;
+  const category = target.dataset.cat;
 
-  if (id) {
-    const n = Number(id);
+  if (addId) {
+    const id = Number(addId);
 
-    if (target.dataset.add || target.dataset.plus) {
-      cart[n] = (cart[n] || 0) + 1;
-    }
-
-    if (target.dataset.minus) {
-      cart[n] = (cart[n] || 1) - 1;
-
-      if (cart[n] <= 0) {
-        delete cart[n];
-      }
-    }
-
-    if (target.dataset.remove) {
-      delete cart[n];
-    }
+    cart[id] = (cart[id] || 0) + 1;
 
     renderCart();
+
     return;
   }
 
-  if (target.dataset.cat) {
-    activeCat = target.dataset.cat;
+  if (plusId) {
+    const id = Number(plusId);
+
+    cart[id] = (cart[id] || 0) + 1;
+
+    renderCart();
+
+    return;
+  }
+
+  if (minusId) {
+    const id = Number(minusId);
+
+    cart[id] = (cart[id] || 1) - 1;
+
+    if (cart[id] <= 0) {
+      delete cart[id];
+    }
+
+    renderCart();
+
+    return;
+  }
+
+  if (removeId) {
+    const id = Number(removeId);
+
+    delete cart[id];
+
+    renderCart();
+
+    return;
+  }
+
+  if (category) {
+    activeCat = category;
 
     renderCats();
     renderMenu();
@@ -494,15 +479,14 @@ document.addEventListener("click", async (e) => {
 
   if (target.id === "checkoutBtn") {
     checkout();
+
     return;
   }
 
-  if (target.dataset.close) {
-    const modal = target.closest(".modal");
-
-    if (modal) {
-      modal.classList.add("hidden");
-    }
+  if (target.dataset.close !== undefined) {
+    target
+      .closest(".modal")
+      .classList.add("hidden");
 
     return;
   }
@@ -510,9 +494,9 @@ document.addEventListener("click", async (e) => {
   if (target.dataset.auth) {
     document
       .querySelectorAll(".tabs button")
-      .forEach((x) =>
-        x.classList.remove("active")
-      );
+      .forEach((button) => {
+        button.classList.remove("active");
+      });
 
     target.classList.add("active");
 
@@ -524,20 +508,23 @@ document.addEventListener("click", async (e) => {
       !register
     );
 
-    $("#authTitle").textContent = register
-      ? "Create account"
-      : "Login";
+    $("#authTitle").textContent =
+      register
+        ? "Create account"
+        : "Login";
 
     $("#authForm").dataset.mode =
       target.dataset.auth;
+
+    $("#authMsg").textContent = "";
 
     return;
   }
 });
 
-/* --------------------------------------------------
+/* =========================
    SEARCH
-   -------------------------------------------------- */
+========================= */
 
 const searchBox = $("#search");
 
@@ -548,16 +535,22 @@ if (searchBox) {
   );
 }
 
-/* --------------------------------------------------
+/* =========================
    AUTH
-   -------------------------------------------------- */
+========================= */
 
 function openAuth() {
-  $("#authModal").classList.remove("hidden");
+  $("#authModal").classList.remove(
+    "hidden"
+  );
 
   $("#authForm").dataset.mode = "login";
 
-  $("#registerFields").classList.add("hidden");
+  $("#registerFields").classList.add(
+    "hidden"
+  );
+
+  $("#authTitle").textContent = "Login";
 
   $("#authMsg").textContent = "";
 }
@@ -568,17 +561,22 @@ function updateLogin() {
     : "👤 Login / Sign Up";
 }
 
-$("#authForm").onsubmit = async (e) => {
-  e.preventDefault();
+$("#authForm").onsubmit = async (event) => {
+  event.preventDefault();
 
-  const form = new FormData(e.target);
+  const form = new FormData(event.target);
+
   const data = Object.fromEntries(form);
+
+  $("#authMsg").textContent =
+    "Please wait...";
 
   try {
     if (
-      e.target.dataset.mode === "register"
+      event.target.dataset.mode ===
+      "register"
     ) {
-      const cred =
+      const credential =
         await auth.createUserWithEmailAndPassword(
           data.email,
           data.password
@@ -586,7 +584,7 @@ $("#authForm").onsubmit = async (e) => {
 
       await db
         .collection("users")
-        .doc(cred.user.uid)
+        .doc(credential.user.uid)
         .set({
           name: data.name || "",
           phone: data.phone || "",
@@ -596,11 +594,10 @@ $("#authForm").onsubmit = async (e) => {
             firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      cred.user.profile = {
+      credential.user.profile = {
         name: data.name || "",
         phone: data.phone || "",
-        address: data.address || "",
-        email: data.email.toLowerCase()
+        address: data.address || ""
       };
     } else {
       await auth.signInWithEmailAndPassword(
@@ -609,20 +606,22 @@ $("#authForm").onsubmit = async (e) => {
       );
     }
 
-    $("#authModal").classList.add("hidden");
+    $("#authModal").classList.add(
+      "hidden"
+    );
 
     if (Object.keys(cart).length) {
       checkout();
     }
-  } catch (err) {
+  } catch (error) {
     $("#authMsg").textContent =
-      friendlyError(err);
+      friendlyError(error);
   }
 };
 
-/* --------------------------------------------------
+/* =========================
    CHECKOUT
-   -------------------------------------------------- */
+========================= */
 
 async function checkout() {
   if (!Object.keys(cart).length) {
@@ -639,7 +638,8 @@ async function checkout() {
     return;
   }
 
-  const profile = user.profile || {};
+  const profile =
+    user.profile || {};
 
   $("#deliveryAddress").value =
     profile.address || "";
@@ -651,30 +651,41 @@ async function checkout() {
   );
 }
 
-/* --------------------------------------------------
+/* =========================
    PLACE ORDER
-   -------------------------------------------------- */
+========================= */
 
-$("#checkoutForm").onsubmit = async (e) => {
-  e.preventDefault();
+$("#checkoutForm").onsubmit = async (event) => {
+  event.preventDefault();
 
-  const form = new FormData(e.target);
+  if (!user) {
+    openAuth();
+    return;
+  }
 
-  const items = Object.entries(cart).map(
-    ([id, qty]) => ({
-      id: Number(id),
-      qty: Number(qty)
-    })
-  );
+  const form = new FormData(event.target);
+
+  const address =
+    String(form.get("address") || "").trim();
+
+  if (!address) {
+    $("#checkoutMsg").textContent =
+      "Please enter your delivery address.";
+
+    return;
+  }
+
+  const selectedItems = Object.entries(cart);
 
   try {
-    const clean = [];
+    const cleanItems = [];
+
     let subtotal = 0;
 
-    for (const line of items) {
+    for (const [id, quantity] of selectedItems) {
       const item = menu.find(
         (x) =>
-          x.id === line.id &&
+          x.id == id &&
           x.available !== false
       );
 
@@ -686,14 +697,14 @@ $("#checkoutForm").onsubmit = async (e) => {
 
       const qty = Math.max(
         1,
-        Math.min(50, line.qty)
+        Math.min(50, Number(quantity))
       );
 
-      clean.push({
+      cleanItems.push({
         id: item.id,
         name: item.name,
         price: Number(item.price),
-        qty
+        qty: qty
       });
 
       subtotal +=
@@ -701,12 +712,11 @@ $("#checkoutForm").onsubmit = async (e) => {
     }
 
     const delivery =
-      subtotal > 0 &&
-      subtotal < FREE_DELIVERY_ABOVE
-        ? DELIVERY_CHARGE
-        : 0;
+      subtotal >= FREE_DELIVERY_ABOVE
+        ? 0
+        : DELIVERY_CHARGE;
 
-    const grandTotal =
+    const total =
       subtotal + delivery;
 
     const ref =
@@ -715,7 +725,9 @@ $("#checkoutForm").onsubmit = async (e) => {
     const order = {
       orderId:
         "KC-" +
-        ref.id.slice(0, 8).toUpperCase(),
+        ref.id
+          .slice(0, 8)
+          .toUpperCase(),
 
       customerId: user.uid,
 
@@ -724,23 +736,23 @@ $("#checkoutForm").onsubmit = async (e) => {
           user.profile.name) ||
         user.email.split("@")[0],
 
-      customerEmail: user.email,
+      customerEmail:
+        user.email,
 
       phone:
         (user.profile &&
           user.profile.phone) ||
         "",
 
-      items: clean,
+      items: cleanItems,
 
-      subtotal,
+      subtotal: subtotal,
 
       deliveryCharge: delivery,
 
-      total: grandTotal,
+      total: total,
 
-      address:
-        form.get("address") || "",
+      address: address,
 
       paymentMethod:
         form.get("paymentMethod") ||
@@ -764,20 +776,20 @@ $("#checkoutForm").onsubmit = async (e) => {
 
     renderCart();
 
+    $("#checkoutForm").reset();
+
     $("#checkoutModal").classList.add(
       "hidden"
     );
 
     alert(
-      `Order ${order.orderId} placed successfully! Total: ${money(
-        order.total
-      )}`
+      `Order ${order.orderId} placed successfully!\nTotal: ${money(order.total)}`
     );
 
     if (
       order.paymentMethod === "UPI"
     ) {
-      location.href =
+      const upiUrl =
         `upi://pay?pa=${encodeURIComponent(
           RESTAURANT_UPI_ID
         )}` +
@@ -789,20 +801,22 @@ $("#checkoutForm").onsubmit = async (e) => {
         `&tn=${encodeURIComponent(
           order.orderId
         )}`;
+
+      window.location.href = upiUrl;
     }
 
     loadOrders();
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
 
     $("#checkoutMsg").textContent =
-      friendlyError(err);
+      friendlyError(error);
   }
 };
 
-/* --------------------------------------------------
-   CUSTOMER ORDERS
-   -------------------------------------------------- */
+/* =========================
+   MY ORDERS
+========================= */
 
 async function loadOrders() {
   if (!user) {
@@ -811,119 +825,137 @@ async function loadOrders() {
   }
 
   try {
-    const snap = await db
-      .collection("orders")
-      .where(
-        "customerId",
-        "==",
-        user.uid
-      )
-      .get();
+    const snapshot =
+      await db
+        .collection("orders")
+        .where(
+          "customerId",
+          "==",
+          user.uid
+        )
+        .get();
 
-    const orders = snap.docs
-      .map((d) => ({
-        id: d.id,
-        ...d.data()
-      }))
-      .sort(
-        (a, b) =>
-          timestampMs(b.createdAt) -
-          timestampMs(a.createdAt)
-      );
+    const orders =
+      snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .sort(
+          (a, b) =>
+            timestampMs(b.createdAt) -
+            timestampMs(a.createdAt)
+        );
 
-    $("#myOrders").innerHTML =
-      orders.length
-        ? orders
-            .map(
-              (o) => `
-                <div class="order-card">
+    if (!orders.length) {
+      $("#myOrders").innerHTML =
+        "<p>No orders yet.</p>";
+    } else {
+      $("#myOrders").innerHTML =
+        orders
+          .map(
+            (order) => `
+              <div class="order-card">
 
-                  <b>
-                    ${escapeHtml(
-                      o.orderId || o.id
-                    )}
-                  </b>
+                <b>
+                  ${escapeHtml(
+                    order.orderId ||
+                      order.id
+                  )}
+                </b>
 
-                  <span class="status">
-                    ${escapeHtml(
-                      o.status || "Pending"
-                    )}
-                  </span>
+                <span class="status">
+                  ${escapeHtml(
+                    order.status ||
+                      "Pending"
+                  )}
+                </span>
 
-                  <div>
-                    ${new Date(
-                      timestampMs(
-                        o.createdAt
-                      )
-                    ).toLocaleString()}
-                  </div>
-
-                  <div>
-                    ${(o.items || [])
-                      .map(
-                        (i) =>
-                          `${escapeHtml(
-                            i.name
-                          )} × ${i.qty}`
-                      )
-                      .join("<br>")}
-                  </div>
-
-                  <hr>
-
-                  <b>
-                    Total ${money(o.total)}
-                  </b>
-
-                  <div>
-                    <small>
-                      Delivery:
-                      ${escapeHtml(
-                        o.address || ""
-                      )}
-                    </small>
-                  </div>
-
+                <div>
+                  ${formatDate(
+                    order.createdAt
+                  )}
                 </div>
-              `
-            )
-            .join("")
-        : "<p>No orders yet.</p>";
+
+                <div>
+                  ${(order.items || [])
+                    .map(
+                      (item) =>
+                        `${escapeHtml(
+                          item.name
+                        )} × ${item.qty}`
+                    )
+                    .join("<br>")}
+                </div>
+
+                <hr>
+
+                <b>
+                  Total
+                  ${money(order.total)}
+                </b>
+
+                <div>
+                  <small>
+                    Delivery:
+                    ${escapeHtml(
+                      order.address ||
+                        ""
+                    )}
+                  </small>
+                </div>
+
+              </div>
+            `
+          )
+          .join("");
+    }
 
     $("#ordersModal").classList.remove(
       "hidden"
     );
   } catch (error) {
-    console.error(error);
-
     alert(
-      "Could not load your orders."
+      "Could not load orders. Please try again."
     );
   }
 }
 
-/* --------------------------------------------------
-   TIMESTAMP
-   -------------------------------------------------- */
+/* =========================
+   DATE
+========================= */
 
-function timestampMs(v) {
-  if (!v) return 0;
+function timestampMs(value) {
+  if (!value) return 0;
 
   if (
-    typeof v.toMillis === "function"
+    typeof value.toMillis ===
+    "function"
   ) {
-    return v.toMillis();
+    return value.toMillis();
   }
 
-  return Date.parse(v) || 0;
+  return Date.parse(value) || 0;
 }
 
-/* --------------------------------------------------
-   FRIENDLY FIREBASE ERRORS
-   -------------------------------------------------- */
+function formatDate(value) {
+  const ms = timestampMs(value);
 
-function friendlyError(err) {
-  const map = {
+  if (!ms) {
+    return "Just now";
+  }
+
+  return new Date(ms).toLocaleString(
+    "en-IN"
+  );
+}
+
+/* =========================
+   ERRORS
+========================= */
+
+function friendlyError(error) {
+  const errors = {
     "auth/email-already-in-use":
       "This email is already registered.",
 
@@ -940,40 +972,21 @@ function friendlyError(err) {
       "Invalid email or password.",
 
     "auth/wrong-password":
-      "Invalid email or password."
+      "Invalid email or password.",
+
+    "permission-denied":
+      "Permission denied by Firebase."
   };
 
   return (
-    map[err.code] ||
-    err.message ||
+    errors[error.code] ||
+    error.message ||
     "Something went wrong."
   );
 }
 
-/* --------------------------------------------------
-   HTML SAFETY
-   -------------------------------------------------- */
-
-function escapeHtml(v) {
-  return String(v ?? "").replace(
-    /[&<>"']/g,
-    (c) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[c])
-  );
-}
-
-function escapeAttribute(v) {
-  return escapeHtml(v);
-}
-
-/* --------------------------------------------------
-   START
-   -------------------------------------------------- */
+/* =========================
+   RUN
+========================= */
 
 init();
