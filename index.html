@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Khaki Canteen & Restaurant</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/logo.png" alt="Khaki Canteen logo">
+    <div>
+      <h1>KHAKI CANTEEN & RESTAURANT</h1>
+      <div>A FAMILY RESTAURANT • BIRBHUM POLICE LINES</div>
+      <small>Contact - 9239538163</small>
+    </div>
+  </div>
+  <div class="header-actions">
+    <input id="search" placeholder="⌕  Search food items...">
+    <button id="loginBtn" class="ghost">👤 Login / Sign Up</button>
+    <button id="cartBtn" class="cart-btn">🛒 <span>Cart</span><b id="cartCount">0</b></button>
+  </div>
+</header>
+
+<nav id="categories" class="categories"></nav>
+
+<section class="hero"><img src="assets/food-banner.jpg" alt="Food banner"></section>
+
+<main class="layout">
+  <section><div id="menu" class="menu-grid"></div></section>
+  <aside class="cart-panel">
+    <div class="cart-head">🛒 Cart</div>
+    <div id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+      <button id="checkoutBtn" class="primary">Checkout →</button>
+    </div>
+  </aside>
+</main>
+
+<div id="authModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close" data-close>×</button>
+    <h2 id="authTitle">Login</h2>
+    <div class="tabs">
+      <button class="active" data-auth="login">Login</button>
+      <button data-auth="register">Create account</button>
+    </div>
+    <form id="authForm">
+      <div id="registerFields" class="hidden">
+        <label>Name<input name="name"></label>
+        <label>Phone<input name="phone"></label>
+        <label>Delivery address<textarea name="address"></textarea></label>
+      </div>
+      <label>Email<input name="email" type="email" required></label>
+      <label>Password<input name="password" type="password" minlength="6" required></label>
+      <button class="primary" type="submit">Continue</button>
+      <p id="authMsg" class="msg"></p>
+    </form>
+  </div>
+</div>
+
+<div id="checkoutModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close" data-close>×</button>
+    <h2>Place your order</h2>
+    <form id="checkoutForm">
+      <label>Delivery address<textarea name="address" id="deliveryAddress" required></textarea></label>
+      <label>Payment
+        <select name="paymentMethod">
+          <option>Cash on Delivery</option>
+          <option>UPI</option>
+          <option>Pay at counter</option>
+        </select>
+      </label>
+      <label>Note<textarea name="note" placeholder="Optional instruction"></textarea></label>
+      <button class="primary" type="submit">Place order</button>
+      <p id="checkoutMsg" class="msg"></p>
+    </form>
+  </div>
+</div>
+
+<div id="ordersModal" class="modal hidden">
+  <div class="modal-card wide">
+    <button class="close" data-close>×</button>
+    <h2>My orders</h2>
+    <div id="myOrders"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

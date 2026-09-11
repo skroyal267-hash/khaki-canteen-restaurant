@@ -1,0 +1,650 @@
+[
+  {
+    "id": 1,
+    "category": "All Time Snacks",
+    "name": "Paneer Pakoda (6P)",
+    "price": 160,
+    "image": "/assets/snacks.jpg",
+    "available": true
+  },
+  {
+    "id": 2,
+    "category": "All Time Snacks",
+    "name": "Cheese Pakoda (6P)",
+    "price": 160,
+    "image": "/assets/snacks.jpg",
+    "available": true
+  },
+  {
+    "id": 3,
+    "category": "All Time Snacks",
+    "name": "French Fries",
+    "price": 70,
+    "image": "/assets/snacks.jpg",
+    "available": true
+  },
+  {
+    "id": 4,
+    "category": "All Time Snacks",
+    "name": "Chicken Pakoda (6P)",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 5,
+    "category": "All Time Snacks",
+    "name": "Fish Finger (6P)",
+    "price": 260,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 6,
+    "category": "All Time Snacks",
+    "name": "Fish Fry (2P)",
+    "price": 260,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 7,
+    "category": "Soups",
+    "name": "Hot & Sour Soup (Veg)",
+    "price": 80,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 8,
+    "category": "Soups",
+    "name": "Hot & Sour Soup (Chicken)",
+    "price": 90,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 9,
+    "category": "Soups",
+    "name": "Sweet Corn Soup (Veg)",
+    "price": 80,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 10,
+    "category": "Soups",
+    "name": "Sweet Corn Soup (Chicken)",
+    "price": 90,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 11,
+    "category": "Soups",
+    "name": "Veg Manchurian Soup",
+    "price": 80,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 12,
+    "category": "Soups",
+    "name": "Chicken Manchurian Soup",
+    "price": 90,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 13,
+    "category": "Soups",
+    "name": "Cream of Tomato Soup",
+    "price": 80,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 14,
+    "category": "Soups",
+    "name": "Veg Clear Soup",
+    "price": 80,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 15,
+    "category": "Soups",
+    "name": "Chicken Clear Soup",
+    "price": 90,
+    "image": "/assets/soup.jpg",
+    "available": true
+  },
+  {
+    "id": 16,
+    "category": "Hot Beverages",
+    "name": "Black Tea",
+    "price": 10,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 17,
+    "category": "Hot Beverages",
+    "name": "Milk Tea",
+    "price": 20,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 18,
+    "category": "Hot Beverages",
+    "name": "Darjeeling Tea",
+    "price": 20,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 19,
+    "category": "Hot Beverages",
+    "name": "Black Coffee",
+    "price": 15,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 20,
+    "category": "Hot Beverages",
+    "name": "Milk Coffee",
+    "price": 30,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 21,
+    "category": "Chinese Starters (Veg)",
+    "name": "Veg Manchurian (Dry)",
+    "price": 130,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 22,
+    "category": "Chinese Starters (Veg)",
+    "name": "Chilli Paneer (Dry) (6P)",
+    "price": 190,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 23,
+    "category": "Chinese Starters (Veg)",
+    "name": "Crispy Chilli Baby Corn",
+    "price": 200,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 24,
+    "category": "Chinese Starters (Veg)",
+    "name": "American Corn Salt & Pepper",
+    "price": 200,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 25,
+    "category": "Chinese Starters (Veg)",
+    "name": "Mushroom Chilli (Dry)",
+    "price": 210,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 26,
+    "category": "Chinese Starters (Veg)",
+    "name": "Crispy Chilli Potato",
+    "price": 130,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 27,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Chicken Lollipop (6P)",
+    "price": 200,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 28,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Chilli Chicken (Dry) (6P)",
+    "price": 205,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 29,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Chicken Salt & Pepper (6P)",
+    "price": 205,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 30,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Crispy Chicken",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 31,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Chicken 65 (6P)",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 32,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Prawn Chilli (Dry) (4P)",
+    "price": 410,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 33,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Golden Butter Prawn Fry (4P)",
+    "price": 430,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 34,
+    "category": "Chinese Starters (Non Veg)",
+    "name": "Chilli Fish (Dry) (6P)",
+    "price": 310,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 35,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Chilli Paneer (Gravy) (6P)",
+    "price": 200,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 36,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Veg Manchurian (Gravy) (6P)",
+    "price": 160,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 37,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Paneer Manchurian (6P)",
+    "price": 200,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 38,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Paneer Sweet & Sour (6P)",
+    "price": 210,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 39,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Mushroom Chilli",
+    "price": 210,
+    "image": "/assets/chinese.jpg",
+    "available": true
+  },
+  {
+    "id": 40,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Chilli Chicken (Gravy) (6P)",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 41,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Chicken Manchurian (6P)",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 42,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Chicken Sweet & Sour (6P)",
+    "price": 225,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 43,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Lemon Chicken (6P)",
+    "price": 230,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 44,
+    "category": "Chinese Main Course (Gravy)",
+    "name": "Garlic Chicken (6P)",
+    "price": 230,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 45,
+    "category": "Rice",
+    "name": "Veg Fried Rice",
+    "price": 130,
+    "image": "/assets/rice.jpg",
+    "available": true
+  },
+  {
+    "id": 46,
+    "category": "Rice",
+    "name": "Egg Fried Rice",
+    "price": 150,
+    "image": "/assets/rice.jpg",
+    "available": true
+  },
+  {
+    "id": 47,
+    "category": "Rice",
+    "name": "Chicken Fried Rice",
+    "price": 160,
+    "image": "/assets/rice.jpg",
+    "available": true
+  },
+  {
+    "id": 48,
+    "category": "Rice",
+    "name": "Mixed Fried Rice",
+    "price": 205,
+    "image": "/assets/rice.jpg",
+    "available": true
+  },
+  {
+    "id": 49,
+    "category": "Rice",
+    "name": "Jeera Rice",
+    "price": 60,
+    "image": "/assets/rice.jpg",
+    "available": true
+  },
+  {
+    "id": 50,
+    "category": "Noodles",
+    "name": "Veg Noodles",
+    "price": 120,
+    "image": "/assets/noodles.jpg",
+    "available": true
+  },
+  {
+    "id": 51,
+    "category": "Noodles",
+    "name": "Egg Noodles",
+    "price": 140,
+    "image": "/assets/noodles.jpg",
+    "available": true
+  },
+  {
+    "id": 52,
+    "category": "Noodles",
+    "name": "Chicken Noodles",
+    "price": 160,
+    "image": "/assets/noodles.jpg",
+    "available": true
+  },
+  {
+    "id": 53,
+    "category": "Noodles",
+    "name": "Mango Shakes",
+    "price": 200,
+    "image": "/assets/shake.jpg",
+    "available": true
+  },
+  {
+    "id": 54,
+    "category": "Veg",
+    "name": "Paneer Butter Masala",
+    "price": 220,
+    "image": "/assets/veg.jpg",
+    "available": true
+  },
+  {
+    "id": 55,
+    "category": "Veg",
+    "name": "Kadai Paneer",
+    "price": 220,
+    "image": "/assets/veg.jpg",
+    "available": true
+  },
+  {
+    "id": 56,
+    "category": "Veg",
+    "name": "Mix Veg",
+    "price": 160,
+    "image": "/assets/veg.jpg",
+    "available": true
+  },
+  {
+    "id": 57,
+    "category": "Veg",
+    "name": "Dal Fry",
+    "price": 140,
+    "image": "/assets/veg.jpg",
+    "available": true
+  },
+  {
+    "id": 58,
+    "category": "Chicken",
+    "name": "Chicken Curry",
+    "price": 160,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 59,
+    "category": "Chicken",
+    "name": "Chicken Masala",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 60,
+    "category": "Chicken",
+    "name": "Chicken Kadai",
+    "price": 210,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 61,
+    "category": "Chicken",
+    "name": "Chicken Do Pyaza",
+    "price": 220,
+    "image": "/assets/chicken.jpg",
+    "available": true
+  },
+  {
+    "id": 62,
+    "category": "Fish",
+    "name": "Fish Curry",
+    "price": 260,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 63,
+    "category": "Fish",
+    "name": "Fish Malai Masala",
+    "price": 260,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 64,
+    "category": "Fish",
+    "name": "Fish Tikka (6P)",
+    "price": 340,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 65,
+    "category": "Fish",
+    "name": "Prawn Curry",
+    "price": 320,
+    "image": "/assets/fish.jpg",
+    "available": true
+  },
+  {
+    "id": 66,
+    "category": "Mutton",
+    "name": "Mutton Curry",
+    "price": 280,
+    "image": "/assets/mutton.jpg",
+    "available": true
+  },
+  {
+    "id": 67,
+    "category": "Mutton",
+    "name": "Mutton Korma",
+    "price": 300,
+    "image": "/assets/mutton.jpg",
+    "available": true
+  },
+  {
+    "id": 68,
+    "category": "Mutton",
+    "name": "Mutton Rogan Josh",
+    "price": 320,
+    "image": "/assets/mutton.jpg",
+    "available": true
+  },
+  {
+    "id": 69,
+    "category": "Mutton",
+    "name": "Mutton Do Pyaza",
+    "price": 340,
+    "image": "/assets/mutton.jpg",
+    "available": true
+  },
+  {
+    "id": 70,
+    "category": "Tandoori / Kebabs",
+    "name": "Tandoori Chicken (Half)",
+    "price": 260,
+    "image": "/assets/tandoori.jpg",
+    "available": true
+  },
+  {
+    "id": 71,
+    "category": "Tandoori / Kebabs",
+    "name": "Tandoori Chicken (Full)",
+    "price": 510,
+    "image": "/assets/tandoori.jpg",
+    "available": true
+  },
+  {
+    "id": 72,
+    "category": "Tandoori / Kebabs",
+    "name": "Chicken Tikka (6P)",
+    "price": 260,
+    "image": "/assets/tandoori.jpg",
+    "available": true
+  },
+  {
+    "id": 73,
+    "category": "Tandoori / Kebabs",
+    "name": "Seekh Kebab (6P)",
+    "price": 280,
+    "image": "/assets/tandoori.jpg",
+    "available": true
+  },
+  {
+    "id": 74,
+    "category": "Shakes",
+    "name": "Chocolate Shake",
+    "price": 60,
+    "image": "/assets/shake.jpg",
+    "available": true
+  },
+  {
+    "id": 75,
+    "category": "Shakes",
+    "name": "Vanilla Shake",
+    "price": 60,
+    "image": "/assets/shake.jpg",
+    "available": true
+  },
+  {
+    "id": 76,
+    "category": "Shakes",
+    "name": "Strawberry Shake",
+    "price": 60,
+    "image": "/assets/shake.jpg",
+    "available": true
+  },
+  {
+    "id": 77,
+    "category": "Shakes",
+    "name": "Mango Shake",
+    "price": 200,
+    "image": "/assets/shake.jpg",
+    "available": true
+  },
+  {
+    "id": 78,
+    "category": "Beverages",
+    "name": "Cold Coffee",
+    "price": 60,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 79,
+    "category": "Beverages",
+    "name": "Tea",
+    "price": 10,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 80,
+    "category": "Beverages",
+    "name": "Lassi",
+    "price": 50,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  },
+  {
+    "id": 81,
+    "category": "Beverages",
+    "name": "Fresh Lime Soda",
+    "price": 50,
+    "image": "/assets/beverage.jpg",
+    "available": true
+  }
+]

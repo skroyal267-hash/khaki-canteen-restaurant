@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Khaki Admin Order Panel</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/logo.png" alt="Khaki Canteen logo">
+    <div><h1>KHAKI ADMIN ORDER PANEL</h1><div>Live Orders • Menu • Delivery Status</div></div>
+  </div>
+  <div class="header-actions"><a href="index.html" style="color:white;text-decoration:none;font-weight:bold">← Customer Site</a></div>
+</header>
+
+<main style="padding:18px;max-width:1250px;margin:auto">
+  <div id="loginBox" class="modal-card" style="margin:20px auto">
+    <h2>Admin login</h2>
+    <p>Use the admin email configured in <code>firebase-config.js</code>.</p>
+    <form id="adminLogin">
+      <label>Email<input name="email" type="email" value="admin@khakicanteen.com"></label>
+      <label>Password<input name="password" type="password" required></label>
+      <button class="primary">Login</button>
+      <p id="adminMsg"></p>
+    </form>
+  </div>
+
+  <section id="dashboard" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2>🔔 Live customer orders</h2>
+      <div>
+        <button id="seedMenu" class="add">Seed / Update Menu</button>
+        <button id="logout" class="add">Logout</button>
+      </div>
+    </div>
+    <p id="seedMsg"></p>
+    <div id="orders"></div>
+
+    <h2 style="margin-top:25px">Menu availability</h2>
+    <div id="adminMenu" class="menu-grid"></div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
